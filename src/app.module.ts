@@ -6,31 +6,32 @@ import { AuthModule } from './auth/auth.module';
 import { GroupModule } from './group/group.module';
 import { AlertModule } from './alert/alert.module';
 import { FcmModule } from './fcm/fcm.module';
-import * as admin from 'firebase-admin';
-import { join } from 'path';
+import { ShelterModule } from './shelter/shelter.module';
+import { DisasterTextAlertModule } from './alert/disaster-text-alert.module';
+import { ScheduleModule } from '@nestjs/schedule'; // ✅ 추가
 import './firebase/firebase-admin';
-
 
 @Module({
   imports: [
-    AuthModule, // Auth 모듈 추가
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost', // MySQL 서버 주소
-      port: 3306, // MySQL 기본 포트
-      username: 'root', // MySQL 계정
-      password: 'sodksk12!@', // MySQL 비밀번호
-      database: 'capston', // 사용할 데이터베이스명
-      synchronize: false, // 기존 테이블 유지
-      autoLoadEntities: true, // 엔티티 자동 로드
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'sodksk12!@',
+      database: 'capston',
+      synchronize: false,
+      autoLoadEntities: true,
     }),
+    ScheduleModule.forRoot(), // ✅ 스케줄러 등록
     AuthModule,
-    GroupModule,      
-    AlertModule,      
+    GroupModule,
+    AlertModule,
     FcmModule,
+    ShelterModule,
+    DisasterTextAlertModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
-

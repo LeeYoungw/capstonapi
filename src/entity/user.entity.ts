@@ -6,8 +6,11 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryColumn,
+  ManyToMany,
+  OneToMany,
 } from 'typeorm';
-import { Building } from './building.entity'; // 외래키 참조 시 필요
+import { Building } from './building.entity';
+import { UserLocationLog } from './user-location-log.entity';
 
 @Entity('users')
 export class User {
@@ -54,4 +57,7 @@ fcmToken: string | null;
   @ManyToOne(() => Building)
   @JoinColumn({ name: 'currentBuildingId' })
   currentBuilding: Building;
+  @OneToMany(() => UserLocationLog, (log) => log.user)
+locationLogs: UserLocationLog[];
+
 }
