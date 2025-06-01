@@ -7,10 +7,10 @@ import { GroupMember } from '../entity/group-member.entity';
 import { User } from '../entity/user.entity';
 import { FcmModule } from '../fcm/fcm.module';
 import { AuthModule } from '../auth/auth.module'; // 👈 JwtService 사용을 위해 import
-
+import { UserLocationLog } from 'src/entity/user-location-log.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserGroup, GroupMember, User]),
+    TypeOrmModule.forFeature([UserGroup, GroupMember, User,UserLocationLog]),
     FcmModule,
     AuthModule, 
   ],

@@ -1,4 +1,3 @@
-// shelter.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('shelters')
@@ -6,18 +5,25 @@ export class Shelter {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @Column({ name: 'name' })
+  name: string; // REARE_NM
 
-  @Column('double')
-  lat: number;
+  @Column({ name: 'address' })
+  address: string; // RONA_DADDR
 
-  @Column('double')
-  lng: number;
+  @Column('double', { name: 'lat' })
+  lat: number; // LAT
 
-  @Column('text')
-  address: string;
+  @Column('double', { name: 'lng' })
+  lng: number; // LOT
 
-  @Column('json')
-  available_for: number[]; // 대피소 구분 코드 배열
+  @Column({ name: 'shelter_type_code' })
+  shelterTypeCode: number; // SHLT_SE_CD
+
+  @Column({ name: 'shelter_type_name' })
+  shelterTypeName: string; // SHLT_SE_NM
+
+  @Column({ name: 'mng_sn', nullable: true })
+  mngSn: string; // MNG_SN (선택)
 }
+

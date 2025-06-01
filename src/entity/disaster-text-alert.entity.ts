@@ -15,8 +15,9 @@ export class DisasterTextAlert {
   @Column('text')
   content: string; // 메시지 내용
 
-  @Column({ name: 'location_name', nullable: true })
-  locationName: string; // 지역명 (있다면)
+  @Column({ name: 'location_name', type: 'text', nullable: true })
+locationName: string;
+
 
   @Column({ name: 'received_at', type: 'datetime' })
   receivedAt: Date; // 수신 시각

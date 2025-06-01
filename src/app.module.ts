@@ -8,7 +8,7 @@ import { AlertModule } from './alert/alert.module';
 import { FcmModule } from './fcm/fcm.module';
 import { ShelterModule } from './shelter/shelter.module';
 import { DisasterTextAlertModule } from './alert/disaster-text-alert.module';
-import { ScheduleModule } from '@nestjs/schedule'; // ✅ 추가
+import { ScheduleModule } from '@nestjs/schedule'; 
 import './firebase/firebase-admin';
 
 @Module({
@@ -23,7 +23,7 @@ import './firebase/firebase-admin';
       synchronize: false,
       autoLoadEntities: true,
     }),
-    ScheduleModule.forRoot(), // ✅ 스케줄러 등록
+    ScheduleModule.forRoot(), 
     AuthModule,
     GroupModule,
     AlertModule,
