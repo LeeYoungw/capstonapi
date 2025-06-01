@@ -116,22 +116,21 @@ async getRealtimeSheltersFromAPI(
       },
     });
 
-    this.logger.debug('📡 Raw API 응답 전체:', JSON.stringify(data, null, 2)); // <-- 이 줄
-log.push(`📡 Raw API 응답 전체:\n${JSON.stringify(data, null, 2)}`);
-    const items = data?.response?.body?.items?.item;
+    // ✅ 콘솔에는 찍되 log에는 넣지 않음
+    this.logger.debug('📡 Raw API 응답 전체:', JSON.stringify(data, null, 2)); 
 
-    if (!Array.isArray(items)) {
-      const warn = '📭 API 응답 형식이 예상과 다릅니다.';
-      this.logger.warn(warn, data);
-      log.push(warn);
-      return { items: [], log };
-    }
+    const items = Array.isArray(data?.body) ? data.body : [];
+
+if (!Array.isArray(items)) {
+  const warn = '📭 API 응답 형식이 예상과 다릅니다.';
+  this.logger.warn(warn, data);
+  log.push(warn);
+  return { items: [], log: log.slice(-10) };
+}
+
 
     log.push(`📦 API에서 받은 전체 항목 수: ${items.length}`);
-    this.logger.log(`📦 API에서 받은 전체 항목 수: ${items.length}`);
-
     log.push(`🎯 필터 기준: lat ${startLat}~${endLat}, lng ${startLng}~${endLng}`);
-    this.logger.log(`🎯 필터 기준: lat ${startLat}~${endLat}, lng ${startLng}~${endLng}`);
 
     const parsed = items.map((item) => {
       const lat = Number(item.LAT);
@@ -154,7 +153,6 @@ log.push(`📡 Raw API 응답 전체:\n${JSON.stringify(data, null, 2)}`);
     });
 
     log.push(`🧾 파싱 완료 항목 수: ${parsed.length}`);
-    this.logger.log(`🧾 파싱 완료 항목 수: ${parsed.length}`);
 
     const filtered = parsed.filter(
       (item) =>
@@ -165,15 +163,15 @@ log.push(`📡 Raw API 응답 전체:\n${JSON.stringify(data, null, 2)}`);
     );
 
     const filteredLog = `📍 최종 반환 shelter 수: ${filtered.length}`;
-    this.logger.log(filteredLog);
     log.push(filteredLog);
 
-    return { items: filtered, log };
+    return { items: filtered, log: log.slice(-10) }; // ✅ 마지막 10줄만 반환
   } catch (err) {
     const errorLog = '❌ 실시간 shelter API 조회 실패: ' + err.message;
     this.logger.error(errorLog);
     log.push(errorLog);
-    return { items: [], log };
+    return { items: [], log: log.slice(-10) };
   }
 }
+
 }
