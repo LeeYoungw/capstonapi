@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+// disaster-text-alert.service.ts
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common'; // 👈 추가
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DisasterTextAlert } from '../entity/disaster-text-alert.entity';
@@ -6,7 +7,7 @@ import axios from 'axios';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
-export class DisasterTextAlertService {
+export class DisasterTextAlertService implements OnModuleInit { // 👈 implements 추가
   private readonly logger = new Logger(DisasterTextAlertService.name);
   private readonly API_URL = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-00247';
   private readonly SERVICE_KEY = '5AFE71AGZ920QV43';
@@ -15,6 +16,11 @@ export class DisasterTextAlertService {
     @InjectRepository(DisasterTextAlert)
     private readonly alertRepo: Repository<DisasterTextAlert>,
   ) {}
+
+  async onModuleInit() {
+    this.logger.log('⏳ 서버 시작 시 재난 문자 자동 동기화 시작');
+    await this.fetchAndSaveAlerts();
+  }
 
   async fetchAndSaveAlerts(): Promise<void> {
     try {
