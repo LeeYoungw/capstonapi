@@ -6,13 +6,14 @@ import { GroupService } from './group.service';
 import { CreateGroupDto } from 'src/dto/CreateGroup.dto';
 import { GroupDetailResponseDto } from 'src/dto/response.dto/GroupDetailResponse.dto';
 import { UserGroup } from 'src/entity/user-group.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth,ApiOkResponse,ApiNotFoundResponse,ApiParam } from '@nestjs/swagger';
 import { JoinGroupDto } from 'src/dto/join-group.dto';
 import { LocationShareResponseDto } from 'src/dto/response.dto/location-response.dto';
 import { FirebaseAuthGuard } from 'src/auth/firebase-auth.guard';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { WithUidDto } from 'src/dto/with-uid.dto';
 import { RespondInviteByUidDto } from 'src/dto/RespondInvite.dto';
+import { DangerMemberResponseDto } from 'src/dto/danger-member.dto';
 @ApiTags('Groups')
 // @ApiBearerAuth()
 // @UseGuards(FirebaseAuthGuard)
@@ -25,6 +26,18 @@ export class GroupController {
   @ApiResponse({ status: 201, description: '그룹 생성 성공' })
   async create(@Body() dto: CreateGroupDto) {
     return this.groupService.createGroup(dto.name, dto.uid);
+  }
+
+
+ @Get(':groupId/danger-members')
+  @ApiOperation({ summary: '그룹 내 위험 상태 멤버 리스트 조회' })
+  @ApiParam({ name: 'groupId', description: '그룹 ID' })
+  @ApiOkResponse({ type: DangerMemberResponseDto })
+  @ApiNotFoundResponse({ description: '그룹을 찾을 수 없음 또는 멤버가 없음' })
+  async getDangerMembers(
+    @Param('groupId') groupId: number,
+  ): Promise<DangerMemberResponseDto> {
+    return this.groupService.getDangerMembersByGroup(groupId);
   }
 
   @Get(':id')

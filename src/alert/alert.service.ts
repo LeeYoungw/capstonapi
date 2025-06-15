@@ -39,7 +39,7 @@ export class AlertService {
             await this.fcmService.sendNotification(
               fcmToken,
               '⚠️ 위험 알림',
-              `${sender?.username || '사용자'}님이 위험 지역에 진입했습니다.\n메시지: ${message}`
+              `${sender?.name || '사용자'}님이 위험 지역에 진입했습니다.\n메시지: ${message}`
             );
           } catch (error) {
             console.error(`FCM 전송 실패 (userId: ${member.userId}):`, error);
@@ -71,7 +71,7 @@ export class AlertService {
             await this.fcmService.sendNotification(
               fcmToken,
               ' 안전 확인',
-              `${sender?.username || '사용자'}님이 안전한 상태로 확인되었습니다.`
+              `${sender?.name || '사용자'}님이 안전한 상태로 확인되었습니다.`
             );
           } catch (error) {
             console.error(`FCM 전송 실패 (userId: ${member.userId}):`, error);

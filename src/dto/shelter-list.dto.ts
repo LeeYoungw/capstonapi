@@ -1,7 +1,6 @@
-// src/shelter/dto/realtime-shelter.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RealtimeShelterItemDto {
+export class ShelterItemDto {
   @ApiProperty({ description: '대피소명' })
   name: string;
 
@@ -19,16 +18,15 @@ export class RealtimeShelterItemDto {
 
   @ApiProperty({ description: '대피소 유형 명칭' })
   shelterTypeName: string;
+
+  @ApiProperty({ description: '관리 번호 (MNG_SN)', required: false })
+  mngSn?: string;
 }
 
-export class RealtimeShelterResponseDto {
-  @ApiProperty({ description: '총 개수' })
+export class ShelterListResponseDto {
+  @ApiProperty({ description: '총 대피소 수' })
   count: number;
 
-  @ApiProperty({ type: [RealtimeShelterItemDto], description: '조회된 대피소 목록' })
-  items: RealtimeShelterItemDto[];
-
-  @ApiProperty({ type: [String], description: '디버그·로그 메시지' })
-  log: string[];
+  @ApiProperty({ type: [ShelterItemDto], description: '저장된 모든 대피소 목록' })
+  items: ShelterItemDto[];
 }
-

@@ -10,6 +10,8 @@ import { JoinGroupDto } from 'src/dto/join-group.dto';
 import { FcmService } from 'src/fcm/fcm.service';
 import { User } from 'src/entity/user.entity';
 import { UserLocationLog } from 'src/entity/user-location-log.entity';
+import { DangerMemberResponseDto } from 'src/dto/danger-member.dto';
+import { DangerMemberItemDto } from 'src/dto/danger-member.dto';
 @Injectable()
 export class GroupService {
   constructor(
@@ -192,7 +194,7 @@ async requestLocationShare(memberId: number, requesterId: string): Promise<void>
       await this.fcmService.sendNotification(
         targetUser.fcmToken,
         '위치 공유 요청',
-        `${sender?.username || '사용자'}님이 위치 공유를 요청했습니다.`
+        `${sender?.name || '사용자'}님이 위치 공유를 요청했습니다.`
       );
     } catch (error) {
       console.error(`FCM 전송 실패 (요청 대상: ${target.userId}):`, error);
@@ -224,7 +226,7 @@ async respondLocationShare(memberId: number, userId: string, accept: boolean): P
       await this.fcmService.sendNotification(
         requester.user.fcmToken,
         accept ? ' 위치 공유 수락됨' : ' 위치 공유 거절됨',
-        `${target.user?.username || '상대방'}님이 위치 공유 요청을 ${accept ? '수락' : '거절'}했습니다.`
+        `${target.user?.name || '상대방'}님이 위치 공유 요청을 ${accept ? '수락' : '거절'}했습니다.`
       );
     } catch (error) {
       console.error(`FCM 전송 실패 (알림 대상: ${requester.userId}):`, error);
@@ -270,7 +272,7 @@ for (const member of sharedMembers) {
   if (latestLog) {
     result.push({
       userId: member.userId,
-      username: member.user.username,
+      username: member.user.name,
       x: latestLog.x,
       y: latestLog.y,
       z: latestLog.z,
@@ -279,6 +281,35 @@ for (const member of sharedMembers) {
   }
 }
     return result;
+  }
+ async getDangerMembersByGroup(groupId: number): Promise<DangerMemberResponseDto> {
+    // 1) 그룹 멤버 조회 (relations 로 user 포함)
+    const members = await this.memberRepo.find({
+      where: { groupId },
+      relations: ['user'],
+    });
+    if (!members.length) {
+      throw new NotFoundException(`그룹 ${groupId} 를 찾을 수 없거나, 멤버가 없습니다.`);
+    } 
+
+    // 2) 위험 상태 필터링
+    const dangerUsers = members
+      .map((gm) => gm.user)
+      .filter((u) => u.isSafe === false);
+
+    // 3) DTO 매핑
+    const items: DangerMemberItemDto[] = dangerUsers.map((u) => ({
+      id: u.id,
+      name: u.name,
+      phone: u.phone,
+      lastGpsLat: u.lastGpsLat,
+      lastGpsLng: u.lastGpsLng,
+    }));
+
+    return {
+      count: items.length,
+      items,
+    };
   }
 }
 
